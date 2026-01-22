@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DAYALU FINANCE - SIP Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ✅ AdSense AUTO ADS (REQUIRED) -->
+<script async
+  data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
+</script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#eef2f3;
+    margin:0;
+    padding:0;
+}
+.container{
+    max-width:540px;
+    margin:20px auto;
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.15);
+}
+h1{
+    text-align:center;
+    color:#2e7d32;
+}
+.tagline{
+    text-align:center;
+    font-size:14px;
+    color:#555;
+    margin-bottom:20px;
+}
+label{
+    font-weight:bold;
+    display:block;
+    margin-top:15px;
+}
+input{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+}
+button{
+    width:100%;
+    margin-top:20px;
+    padding:10px;
+    background:#2e7d32;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+.result{
+    margin-top:15px;
+    background:#f9f9f9;
+    padding:10px;
+    border-radius:6px;
+    font-size:14px;
+}
+.flex-box{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:15px;
+}
+.monthly-box{
+    flex:1 1 100%;
+    background:#e8f5e9;
+    padding:10px;
+    border-radius:8px;
+    text-align:center;
+    font-weight:bold;
+}
+.section{
+    margin-top:25px;
+}
+.section h2{
+    color:#2e7d32;
+    font-size:18px;
+}
+.section p, .section li{
+    font-size:14px;
+    line-height:1.6;
+}
+.section ul{
+    padding-left:18px;
+}
+.disclaimer-box{
+    background:#fff3e0;
+    padding:12px;
+    border-radius:8px;
+    font-size:13px;
+    margin-top:20px;
+}
+.footer-links{
+    text-align:center;
+    margin-top:20px;
+}
+.footer-links a{
+    margin:0 8px;
+    text-decoration:none;
+    color:#1976d2;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>DAYALU FINANCE</h1>
+<p class="tagline">Smart SIP Calculator for Long-Term Investment</p>
+
+<label>Monthly Investment (₹)</label>
+<input type="number" id="amount" placeholder="5000">
+
+<label>Expected Annual Return (%)</label>
+<input type="number" id="rate" placeholder="12">
+
+<label>Investment Period (Years)</label>
+<input type="number" id="years" placeholder="10">
+
+<button onclick="calculateSIP()">Calculate SIP</button>
+
+<div class="result" id="output"></div>
+
+<div class="flex-box">
+  <div class="monthly-box" id="monthlyReturn">Monthly Return<br>₹0</div>
+  <canvas id="sipChart"></canvas>
+</div>
+
+<!-- CONTENT -->
+
+<div class="section">
+<h2>What is SIP?</h2>
+<p>
+SIP (Systematic Investment Plan) allows you to invest a fixed amount regularly in mutual funds and build wealth through disciplined investing.
+</p>
+</div>
+
+<div class="section">
+<h2>How SIP Works</h2>
+<ul>
+<li>You invest a fixed amount every month</li>
+<li>Money is invested in mutual funds</li>
+<li>Returns grow due to compounding</li>
+<li>Long-term investing reduces risk</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>Benefits of SIP</h2>
+<ul>
+<li>Disciplined savings habit</li>
+<li>Affordable investment option</li>
+<li>Power of compounding</li>
+<li>Lower market timing risk</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>FAQs</h2>
+<p><b>Is SIP safe?</b><br>Yes, for long-term investment in good funds.</p>
+<p><b>Can I stop SIP anytime?</b><br>Yes, SIP is flexible.</p>
+<p><b>Minimum SIP amount?</b><br>Usually starts from ₹500.</p>
+<p><b>SIP vs Lump sum?</b><br>SIP reduces market risk.</p>
+</div>
+
+<div class="disclaimer-box">
+<b>Important Disclaimer:</b><br>
+This SIP calculator is for educational purposes only. Results are approximate and do not guarantee returns. Mutual fund investments are subject to market risks. Please consult a financial advisor before investing.
+</div>
+
+<div class="footer-links">
+<a href="about.html">About</a> |
+<a href="privacy.html">Privacy Policy</a> |
+<a href="contact.html">Contact Us</a>
+</div>
+
+</div>
+
+<script>
+let chart;
+function rupee(n){return "\u20B9"+Math.round(n).toLocaleString("en-IN");}
+
+function calculateSIP(){
+let P=+amount.value;
+let r=(+rate.value/100)/12;
+let n=+years.value*12;
+if(P<=0||r<=0||n<=0){alert("Enter valid values");return;}
+
+let FV=P*((Math.pow(1+r,n)-1)/r)*(1+r);
+let invested=P*n;
+let profit=FV-invested;
+
+monthlyReturn.innerHTML="Monthly Return<br>"+rupee(profit/n);
+output.innerHTML="<b>Total Invested:</b> "+rupee(invested)+"<br><b>Profit:</b> "+rupee(profit)+"<br><b>Total Value:</b> "+rupee(FV);
+
+if(chart)chart.destroy();
+chart=new Chart(sipChart,{
+type:"pie",
+data:{labels:["Invested","Profit"],datasets:[{data:[invested,profit],backgroundColor:["#1976d2","#2e7d32"]}]},
+options:{plugins:{datalabels:{formatter:(v)=>((v/(invested+profit))*100).toFixed(1)+"%"}}},
+plugins:[ChartDataLabels]
+});
+}
+</script>
+
+</body>
+</html>
