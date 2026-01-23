@@ -115,8 +115,7 @@ button{
 }
 </style>
 </head>
-<footer style="text-align:center; padding:20px; font-size:13px; color:#666; border-top:1px solid #ddd;">
-  © 2026 DAYALU FINANCE | Last updated on <span id="lastUpdate"></span>
+
 </footer>
 
 <script>
@@ -226,7 +225,16 @@ plugins:[ChartDataLabels]
 });
 }
 </script>
+<footer style="text-align:center; padding:20px; font-size:13px; color:#666; border-top:1px solid #ddd;">
+  © 2026 DAYALU FINANCE | Last updated on <span id="lastUpdate"></span>
+</footer>
+
+<script>
+  document.getElementById("lastUpdate").innerText =
+    new Date().toLocaleString("en-IN");
+</script>
 
 </body>
 </html>
+
 
